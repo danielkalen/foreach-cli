@@ -1,0 +1,39 @@
+{
+  "name": "foreach-cli",
+  "version": "1.0.1",
+  "description": "CLI util to execute a command for each file matching a glob",
+  "keywords": [
+    "cli",
+    "foreach",
+    "each",
+    "command",
+    "foreach-command",
+    "run",
+    "line"
+  ],
+  "main": "foreach.js",
+  "bin": {
+    "foreach": "./foreach.js"
+  },
+  "author": "danielkalen",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danielkalen/foreach-cli"
+  },
+  "license": "MIT",
+  "scripts": {
+    "watch": "nodemon -e coffee -w ./src -x 'npm run compile'",
+    "compile": "coffee -o ./ -c src/foreach.coffee && npm run prependbin && npm run makeexec",
+    "prependbin": "echo '#!/usr/bin/env node' | cat - foreach.js > tmp.js && mv tmp.js foreach.js",
+    "makeexec": "chmod +x foreach.js",
+    "copytopublic": "cp -r -f ./ ../../sandbox-public/foreach"
+  },
+  "dependencies": {
+    "glob": "^6.0.4",
+    "yargs": "^3.29.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.10.0",
+    "nodemon": "^1.8.1"
+  }
+}
