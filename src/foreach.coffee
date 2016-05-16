@@ -28,7 +28,7 @@ commandToExecute = args.x || args.execute || args[1]
 help = args.h || args.help
 
 regEx =
-	placeholder: /\#\{(\S+)\}/ig
+	placeholder: /\#\{([^\/\}]+)\}/ig
 
 
 if help
@@ -44,6 +44,7 @@ glob globToRun, (err, files)->
 
 executeCommandFor = (filePath)->
 	pathParams = path.parse filePath
+	pathParams.reldir = getDirName(pathParams, path.resolve(filePath))
 
 	console.log "Executing command for: #{filePath}"
 
@@ -63,6 +64,14 @@ executeCommandFor = (filePath)->
 		if stderr then console.log(stderr)
 
 
+
+getDirName = (pathParams, filePath)->
+	dirInGlob = globToRun.match(/^[^\*\/]*/)[0]
+	dirInGlob += if dirInGlob then '/' else ''
+	filePath
+		.replace pathParams.base, ''
+		.replace process.cwd()+"/#{dirInGlob}", ''
+		.slice(0, -1)
 
 
 
