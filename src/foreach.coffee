@@ -55,7 +55,7 @@ glob globToRun, (err, files)-> if err then return console.error(err) else
 		'name': 'Errors'
 		'color': 'red'
 
-	statusBar.addItem
+	@totalTime = statusBar.addItem
 		'type': 'time'
 		'name': 'Time'
 	
@@ -97,6 +97,7 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 
 	console.log "Executing command for: #{filePath}"
 	@progress.inc()
+	@totalTime.count = process.uptime()*1000
 
 	command = commandToExecute.replace regEx.placeholder, (entire, placeholder)-> switch
 		when placeholder is 'path' then filePath
