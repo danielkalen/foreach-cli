@@ -1,6 +1,6 @@
 {
   "name": "foreach-cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "CLI util to execute a command for each file matching a glob",
   "keywords": [
     "cli",
