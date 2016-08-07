@@ -62,7 +62,7 @@
   };
 
   executeCommandFor = function(filePath) {
-    return new Promsie(function(resolve) {
+    return new Promise(function(resolve) {
       var command, pathParams;
       pathParams = path.parse(filePath);
       pathParams.reldir = getDirName(pathParams, path.resolve(filePath));

@@ -47,7 +47,7 @@ processPath = (filePath)-> if filePath
 	executeCommandFor(filePath).then ()-> processPath(@queue.pop())
 
 
-executeCommandFor = (filePath)-> new Promsie (resolve)->
+executeCommandFor = (filePath)-> new Promise (resolve)->
 	pathParams = path.parse filePath
 	pathParams.reldir = getDirName(pathParams, path.resolve(filePath))
 
