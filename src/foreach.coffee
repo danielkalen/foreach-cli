@@ -38,11 +38,16 @@ if help
 
 glob globToRun, (err, files)->
 	if err then return console.log(err)
-	files.forEach (file)-> executeCommandFor(file)
+	
+	@queue = files.slice()
+	processPath(@queue.pop())
 
 
+processPath = (filePath)-> if filePath
+	executeCommandFor(filePath).then ()-> processPath(@queue.pop())
 
-executeCommandFor = (filePath)->
+
+executeCommandFor = (filePath)-> new Promsie (resolve)->
 	pathParams = path.parse filePath
 	pathParams.reldir = getDirName(pathParams, path.resolve(filePath))
 
@@ -62,6 +67,7 @@ executeCommandFor = (filePath)->
 		if err then console.log(err)
 		if stdout then console.log(stdout)
 		if stderr then console.log(stderr)
+		resolve()
 
 
 
