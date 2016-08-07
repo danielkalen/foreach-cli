@@ -72,7 +72,7 @@
         'name': 'Errors',
         'color': 'red'
       });
-      statusBar.addItem({
+      this.totalTime = statusBar.addItem({
         'type': 'time',
         'name': 'Time'
       });
@@ -124,6 +124,7 @@
       pathParams.reldir = getDirName(pathParams, path.resolve(filePath));
       console.log("Executing command for: " + filePath);
       this.progress.inc();
+      this.totalTime.count = process.uptime() * 1000;
       command = commandToExecute.replace(regEx.placeholder, function(entire, placeholder) {
         switch (false) {
           case placeholder !== 'path':
