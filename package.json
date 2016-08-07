@@ -28,7 +28,9 @@
     "makeexec": "chmod +x foreach.js"
   },
   "dependencies": {
+    "chalk": "^1.1.3",
     "glob": "^6.0.4",
+    "node-status": "^0.1.7",
     "yargs": "^3.29.0"
   },
   "devDependencies": {

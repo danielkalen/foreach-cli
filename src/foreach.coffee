@@ -15,6 +15,9 @@ options =
 fs = require('fs')
 path = require('path')
 glob = require('glob')
+chalk = require('chalk')
+statusBar = require('node-status')
+console = statusBar.console()
 exec = require('child_process').exec
 yargs = require('yargs')
 		.usage("Usage: -g <glob> -x <command>")
@@ -22,29 +25,70 @@ yargs = require('yargs')
 		.help('h')
 		.alias('h', 'help')
 args = yargs.argv
-
 globToRun = args.g || args.glob || args[0]
 commandToExecute = args.x || args.execute || args[1]
 help = args.h || args.help
-
-regEx =
-	placeholder: /\#\{([^\/\}]+)\}/ig
-
+regEx = placeholder: /\#\{([^\/\}]+)\}/ig
+finalLogs = 'log':{}, 'warn':{}, 'error':{}
 
 if help
 	process.stdout.write(yargs.help());
 	process.exit(0)
 
 
-glob globToRun, (err, files)->
-	if err then return console.log(err)
+
+
+
+
+## ==========================================================================
+## Logic
+## ========================================================================== 
+glob globToRun, (err, files)-> if err then return console.error(err) else
+	@progress = statusBar.addItem
+		'type': ['bar', 'percentage']
+		'name': 'Processed'
+		'max': files.length
+		'color': 'green'
 	
+	@errorCount = statusBar.addItem
+		'type': 'count'
+		'name': 'Errors'
+		'color': 'red'
+
+	statusBar.addItem
+		'type': 'time'
+		'name': 'Time'
+	
+	statusBar.start('invert':false, 'interval':50, 'uptime':false)
+
 	@queue = files.slice()
 	processPath(@queue.pop())
 
 
-processPath = (filePath)-> if filePath
-	executeCommandFor(filePath).then ()-> processPath(@queue.pop())
+
+
+processPath = (filePath)->
+	if filePath
+		executeCommandFor(filePath).then ()-> processPath(@queue.pop())
+	
+	else
+		statusBar.stop()
+		
+		for file,message of finalLogs.log
+			console.log chalk.bgWhite.black.bold.underline(file)
+			console.log message
+		
+		for file,message of finalLogs.warn
+			console.log chalk.bgWhite.black.bold.underline(file)
+			console.warn message
+		
+		for file,message of finalLogs.error
+			console.log chalk.bgWhite.black.bold.underline(file)
+			console.error message
+
+
+
+
 
 
 executeCommandFor = (filePath)-> new Promise (resolve)->
@@ -52,22 +96,22 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 	pathParams.reldir = getDirName(pathParams, path.resolve(filePath))
 
 	console.log "Executing command for: #{filePath}"
+	@progress.inc()
 
-	command = commandToExecute.replace regEx.placeholder, (entire, placeholder)->
-		if placeholder is 'path'
-			return filePath
+	command = commandToExecute.replace regEx.placeholder, (entire, placeholder)-> switch
+		when placeholder is 'path' then filePath
+		when pathParams[placeholder]? then pathParams[placeholder]
+		else entire
 		
-		else if pathParams[placeholder]?
-			return pathParams[placeholder]
-		
-		else return entire
-
 
 	exec command, (err, stdout, stderr)->
-		if err then console.log(err)
-		if stdout then console.log(stdout)
-		if stderr then console.log(stderr)
+		if err then @errorCount.inc(); finalLogs.error[filePath] = err
+		if stdout then finalLogs.log[filePath] = stdout
+		if stderr then @errorCount.inc(); finalLogs.warn[filePath] = stderr
 		resolve()
+
+
+
 
 
 
