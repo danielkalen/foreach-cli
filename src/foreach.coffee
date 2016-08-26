@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env coffee
 options =
 	'g': 
 		alias: 'glob'
@@ -18,7 +18,7 @@ statusBar = require('node-status')
 console = statusBar.console()
 exec = require('child_process').exec
 yargs = require('yargs')
-		.usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>")
+		.usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>\nPlaceholders can be either noted with double curly braces {{name}} or hash+surrounding curly braces \#{name}")
 		.options(options)
 		.help('h')
 		.alias('h', 'help')
@@ -26,7 +26,7 @@ args = yargs.argv
 globToRun = args.g || args.glob || args[0]
 commandToExecute = args.x || args.execute || args[1]
 help = args.h || args.help
-regEx = placeholder: /\#\{([^\/\}]+)\}/ig
+regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\}[^\}]*)/ig
 finalLogs = 'log':{}, 'warn':{}, 'error':{}
 
 if help or not globToRun or not commandToExecute
@@ -65,26 +65,13 @@ glob globToRun, (err, files)-> if err then return console.error(err) else
 
 
 
+
 processPath = (filePath)->
 	if filePath
 		executeCommandFor(filePath).then ()-> processPath(@queue.pop())
-	
 	else
 		statusBar.stop()
-		
-		for file,message of finalLogs.log
-			console.log chalk.bgWhite.black.bold.underline(file)
-			console.log message
-		
-		for file,message of finalLogs.warn
-			console.log chalk.bgYellow.black.bold.underline(file)
-			console.warn message
-		
-		for file,message of finalLogs.error
-			console.log chalk.bgRed.black.bold.underline(file)
-			console.error message
-
-
+		outputFinalLogs()
 
 
 
@@ -114,6 +101,16 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 
 
 
+
+
+
+
+
+
+
+## ==========================================================================
+## Helpers
+## ========================================================================== 
 getDirName = (pathParams, filePath)->
 	dirInGlob = globToRun.match(/^[^\*\/]*/)[0]
 	dirInGlob += if dirInGlob then '/' else ''
@@ -122,6 +119,23 @@ getDirName = (pathParams, filePath)->
 		.replace process.cwd()+"/#{dirInGlob}", ''
 		.slice(0, -1)
 
+
+
+
+
+
+outputFinalLogs = ()->
+	for file,message of finalLogs.log
+		console.log chalk.bgWhite.black.bold.underline(file)
+		console.log message
+	
+	for file,message of finalLogs.warn
+		console.log chalk.bgYellow.black.bold.underline(file)
+		console.warn message
+	
+	for file,message of finalLogs.error
+		console.log chalk.bgRed.black.bold.underline(file)
+		console.error message
 
 
 
