@@ -7,12 +7,14 @@
     'g': {
       alias: 'glob',
       describe: 'Specify the glob ',
-      type: 'string'
+      type: 'string',
+      demand: false
     },
     'x': {
       alias: 'execute',
       describe: 'Command to execute upon file addition/change',
-      type: 'string'
+      type: 'string',
+      demand: false
     }
   };
 
@@ -34,9 +36,9 @@
 
   args = yargs.argv;
 
-  globToRun = args.g || args.glob || args[0];
+  globToRun = args.g || args.glob || args._[0];
 
-  commandToExecute = args.x || args.execute || args[1];
+  commandToExecute = args.x || args.execute || args._[1];
 
   help = args.h || args.help;
 
@@ -98,7 +100,7 @@
   executeCommandFor = function(filePath) {
     return new Promise(function(resolve) {
       var command, pathParams;
-      pathParams = path.parse(filePath);
+      pathParams = path.parse(path.resolve(filePath));
       pathParams.reldir = getDirName(pathParams, path.resolve(filePath));
       console.log("Executing command for: " + filePath);
       this.progress.inc();
@@ -147,14 +149,14 @@
     ref1 = finalLogs.warn;
     for (file in ref1) {
       message = ref1[file];
-      console.log(chalk.bgYellow.black.bold.underline(file));
+      console.log(chalk.bgYellow.white.bold.underline(file));
       console.warn(message);
     }
     ref2 = finalLogs.error;
     results = [];
     for (file in ref2) {
       message = ref2[file];
-      console.log(chalk.bgRed.black.bold.underline(file));
+      console.log(chalk.bgRed.white.bold.underline(file));
       results.push(console.error(message));
     }
     return results;

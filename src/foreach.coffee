@@ -4,10 +4,12 @@ options =
 		alias: 'glob'
 		describe: 'Specify the glob '
 		type: 'string'
+		demand: false
 	'x': 
 		alias: 'execute'
 		describe: 'Command to execute upon file addition/change'
 		type: 'string'
+		demand: false
 
 
 fs = require('fs')
@@ -23,8 +25,8 @@ yargs = require('yargs')
 		.help('h')
 		.alias('h', 'help')
 args = yargs.argv
-globToRun = args.g || args.glob || args[0]
-commandToExecute = args.x || args.execute || args[1]
+globToRun = args.g || args.glob || args._[0]
+commandToExecute = args.x || args.execute || args._[1]
 help = args.h || args.help
 regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\}[^\}]*)/ig
 finalLogs = 'log':{}, 'warn':{}, 'error':{}
@@ -77,7 +79,7 @@ processPath = (filePath)->
 
 
 executeCommandFor = (filePath)-> new Promise (resolve)->
-	pathParams = path.parse filePath
+	pathParams = path.parse path.resolve(filePath)
 	pathParams.reldir = getDirName(pathParams, path.resolve(filePath))
 
 	console.log "Executing command for: #{filePath}"
@@ -130,11 +132,11 @@ outputFinalLogs = ()->
 		console.log message
 	
 	for file,message of finalLogs.warn
-		console.log chalk.bgYellow.black.bold.underline(file)
+		console.log chalk.bgYellow.white.bold.underline(file)
 		console.warn message
 	
 	for file,message of finalLogs.error
-		console.log chalk.bgRed.black.bold.underline(file)
+		console.log chalk.bgRed.white.bold.underline(file)
 		console.error message
 
 
