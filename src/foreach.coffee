@@ -57,7 +57,7 @@ glob globToRun, (err, files)-> if err then return console.error(err) else
 		'type': 'time'
 		'name': 'Time'
 	
-	statusBar.start('invert':false, 'interval':50, 'uptime':false)
+	statusBar.start('invert':false, 'interval':20, 'uptime':false)
 
 	@queue = files.slice()
 	processPath(@queue.pop())
