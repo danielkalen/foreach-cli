@@ -22,10 +22,14 @@
   },
   "license": "MIT",
   "scripts": {
-    "watch": "nodemon -e coffee -w ./src -x 'npm run compile'",
-    "compile": "coffee -o ./ -c src/foreach.coffee && npm run prependbin && npm run makeexec",
+    "watch": "nodemon -e coffee -w ./src -x 'npm run build'",
+    "build": "npm run compile && npm run prependbin && npm run makeexec",
+    "compile": "coffee -o ./ -c src/foreach.coffee",
     "prependbin": "echo '#!/usr/bin/env node' | cat - foreach.js > tmp.js && mv tmp.js foreach.js",
-    "makeexec": "chmod +x foreach.js"
+    "makeexec": "chmod +x foreach.js",
+    "badge": "coffee .config/badge-gen.coffee",
+    "istanbul": "istanbul cover --dir test/coverage/node node_modules/mocha/bin/_mocha -- -u tdd -b",
+    "test": "mocha -u tdd -b"
   },
   "dependencies": {
     "chalk": "^1.1.3",
@@ -34,7 +38,16 @@
     "yargs": "^3.29.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-spies": "^0.7.1",
     "coffee-script": "^1.10.0",
-    "nodemon": "^1.8.1"
+    "create-output-stream": "0.0.1",
+    "fs-extra": "^0.30.0",
+    "istanbul": "^0.4.5",
+    "lcov-parse": "0.0.10",
+    "mocha": "^3.0.2",
+    "nodemon": "^1.8.1",
+    "request": "^2.74.0",
+    "svg2png": "^3.0.1"
   }
 }
