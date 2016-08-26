@@ -7,14 +7,12 @@
     'g': {
       alias: 'glob',
       describe: 'Specify the glob ',
-      type: 'string',
-      demand: true
+      type: 'string'
     },
     'x': {
       alias: 'execute',
       describe: 'Command to execute upon file addition/change',
-      type: 'string',
-      demand: true
+      type: 'string'
     }
   };
 
@@ -32,7 +30,7 @@
 
   exec = require('child_process').exec;
 
-  yargs = require('yargs').usage("Usage: -g <glob> -x <command>").options(options).help('h').alias('h', 'help');
+  yargs = require('yargs').usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>").options(options).help('h').alias('h', 'help');
 
   args = yargs.argv;
 
@@ -52,7 +50,7 @@
     'error': {}
   };
 
-  if (help) {
+  if (help || !globToRun || !commandToExecute) {
     process.stdout.write(yargs.help());
     process.exit(0);
   }

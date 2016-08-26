@@ -4,12 +4,10 @@ options =
 		alias: 'glob'
 		describe: 'Specify the glob '
 		type: 'string'
-		demand: true
 	'x': 
 		alias: 'execute'
 		describe: 'Command to execute upon file addition/change'
 		type: 'string'
-		demand: true
 
 
 fs = require('fs')
@@ -20,7 +18,7 @@ statusBar = require('node-status')
 console = statusBar.console()
 exec = require('child_process').exec
 yargs = require('yargs')
-		.usage("Usage: -g <glob> -x <command>")
+		.usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>")
 		.options(options)
 		.help('h')
 		.alias('h', 'help')
@@ -31,7 +29,7 @@ help = args.h || args.help
 regEx = placeholder: /\#\{([^\/\}]+)\}/ig
 finalLogs = 'log':{}, 'warn':{}, 'error':{}
 
-if help
+if help or not globToRun or not commandToExecute
 	process.stdout.write(yargs.help());
 	process.exit(0)
 
