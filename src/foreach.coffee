@@ -28,7 +28,7 @@ args = yargs.argv
 globToRun = args.g || args.glob || args._[0]
 commandToExecute = args.x || args.execute || args._[1]
 help = args.h || args.help
-regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\}[^\}]*)/ig
+regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\})/ig
 finalLogs = 'log':{}, 'warn':{}, 'error':{}
 
 if help or not globToRun or not commandToExecute

@@ -43,7 +43,7 @@
   help = args.h || args.help;
 
   regEx = {
-    placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\}[^\}]*)/ig
+    placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\})/ig
   };
 
   finalLogs = {
