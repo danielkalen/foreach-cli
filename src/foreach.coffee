@@ -77,11 +77,11 @@ processPath = (filePath)->
 			console.log message
 		
 		for file,message of finalLogs.warn
-			console.log chalk.bgWhite.black.bold.underline(file)
+			console.log chalk.bgYellow.black.bold.underline(file)
 			console.warn message
 		
 		for file,message of finalLogs.error
-			console.log chalk.bgWhite.black.bold.underline(file)
+			console.log chalk.bgRed.black.bold.underline(file)
 			console.error message
 
 
@@ -104,9 +104,9 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 		
 
 	exec command, (err, stdout, stderr)->
-		if err then @errorCount.inc(); finalLogs.error[filePath] = err
+		if err then finalLogs.warn[filePath] = err
 		if stdout then finalLogs.log[filePath] = stdout
-		if stderr then @errorCount.inc(); finalLogs.warn[filePath] = stderr
+		if stderr then @errorCount.inc(); finalLogs.error[filePath] = stderr
 		resolve()
 
 
