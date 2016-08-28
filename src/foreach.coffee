@@ -23,7 +23,8 @@ yargs = require('yargs')
 		.usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>\nPlaceholders can be either noted with double curly braces {{name}} or hash+surrounding curly braces \#{name}")
 		.options(options)
 		.help('h')
-		.alias('h', 'help')
+		.wrap(null)
+		.version()
 args = yargs.argv
 globToRun = args.g || args.glob || args._[0]
 commandToExecute = args.x || args.execute || args._[1]
