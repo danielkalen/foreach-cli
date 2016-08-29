@@ -10,6 +10,12 @@ options =
 		describe: 'Command to execute upon file addition/change'
 		type: 'string'
 		demand: false
+	'c': 
+		alias: 'forceColor'
+		describe: 'Force color TTY output (pass --no-c) to disable'
+		type: 'boolean'
+		default: true
+		demand: false
 
 
 fs = require('fs')
@@ -26,9 +32,10 @@ yargs = require('yargs')
 		.wrap(null)
 		.version()
 args = yargs.argv
-globToRun = args.g || args.glob || args._[0]
-commandToExecute = args.x || args.execute || args._[1]
-help = args.h || args.help
+globToRun = args.g or args.glob or args._[0]
+commandToExecute = args.x or args.execute or args._[1]
+forceColor = args.c or args.forceColor
+help = args.h or args.help
 regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\})/ig
 finalLogs = 'log':{}, 'warn':{}, 'error':{}
 
@@ -91,7 +98,8 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 		when placeholder is 'path' then filePath
 		when pathParams[placeholder]? then pathParams[placeholder]
 		else entire
-		
+	
+	command = "FORCE_COLOR=true #{command}" if forceColor
 
 	exec command, (err, stdout, stderr)->
 		if err then finalLogs.warn[filePath] = err
