@@ -13,14 +13,18 @@ options =
 		describe: 'Force color TTY output (pass --no-c to disable)'
 		type: 'boolean'
 		default: true
+	'C': 
+		alias: 'concurrent'
+		describe: 'Execute commands concurrently (pass --no-C to disable)'
+		type: 'boolean'
+		default: true
 
 
 fs = require('fs')
 path = require('path')
 glob = require('glob')
 chalk = require('chalk')
-statusBar = require('node-status')
-console = statusBar.console()
+Listr = require '@danielkalen/listr'
 exec = require('child_process').exec
 yargs = require('yargs')
 		.usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>\nPlaceholders can be either noted with double curly braces {{name}} or hash+surrounding curly braces \#{name}")
@@ -32,6 +36,7 @@ args = yargs.argv
 globToRun = args.g or args.glob or args._[0]
 commandToExecute = args.x or args.execute or args._[1]
 forceColor = args.c or args.forceColor
+concurrent = args.C or args.concurrent
 help = args.h or args.help
 regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\})/ig
 finalLogs = 'log':{}, 'error':{}
@@ -49,47 +54,19 @@ if help or not globToRun or not commandToExecute
 ## Logic
 ## ========================================================================== 
 glob globToRun, (err, files)-> if err then return console.error(err) else
-	@progress = statusBar.addItem
-		'type': ['bar', 'percentage']
-		'name': 'Processed'
-		'max': files.length
-		'color': 'green'
-	
-	@errorCount = statusBar.addItem
-		'type': 'count'
-		'name': 'Errors'
-		'color': 'red'
+	tasks = new Listr files.map((file)=>
+		title: "Executing command: #{chalk.dim(file)}"		
+		task: ()=> executeCommand(file)
+	), {concurrent}
 
-	@totalTime = statusBar.addItem
-		'type': 'time'
-		'name': 'Time'
-	
-	statusBar.start('invert':false, 'interval':20, 'uptime':false)
-
-	@queue = files.slice()
-	processPath(@queue.pop())
+	tasks.run().then(outputFinalLogs, outputFinalLogs)
 
 
 
 
-
-processPath = (filePath)->
-	if filePath
-		executeCommandFor(filePath).then ()-> processPath(@queue.pop())
-	else
-		statusBar.stop()
-		outputFinalLogs()
-
-
-
-
-executeCommandFor = (filePath)-> new Promise (resolve)->
+executeCommand = (filePath)-> new Promise (resolve, reject)->
 	pathParams = path.parse path.resolve(filePath)
 	pathParams.reldir = getDirName(pathParams, path.resolve(filePath))
-
-	console.log "Executing command for: #{filePath}"
-	@progress.inc()
-	@totalTime.count = process.uptime()*1000
 
 	command = commandToExecute.replace regEx.placeholder, (entire, placeholder)-> switch
 		when placeholder is 'path' then filePath
@@ -105,7 +82,8 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 			finalLogs.log[filePath] = err
 		else if err
 			finalLogs.error[filePath] = stderr or err
-		resolve()
+
+		if err then reject() else resolve()
 
 
 
@@ -135,7 +113,8 @@ getDirName = (pathParams, filePath)->
 
 
 
-outputFinalLogs = ()->
+outputFinalLogs = ()-> if Object.keys(finalLogs.log).length or Object.keys(finalLogs.error).length
+	process.stdout.write '\n\n'
 	for file,message of finalLogs.log
 		console.log chalk.bgWhite.black.bold("Output")+' '+chalk.dim(file)
 		console.log message

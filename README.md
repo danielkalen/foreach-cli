@@ -19,9 +19,12 @@ foreach -g <glob> -x <command to execute>
 **Command Line Options:**
 
 ```bash
--g, --glob     Specify the glob                            [string] [required]
--x, --execute  Command to execute upon file addition/change[string] [required]
--h, --help     Show help                                             [boolean]
+-g, --glob        Specify the glob
+-x, --execute     Command to execute upon file addition/change
+-c, --forceColor  Force color TTY output (pass --no-c to disable)
+-C, --concurrent  Execute commands concurrently (pass --no-C to disable)
+-h, --help        Show help
+--version         Show version number                                       
 ```
 
 **Executing Command Placeholders**
@@ -29,7 +32,7 @@ foreach -g <glob> -x <command to execute>
 "path"  -  full path and filename
 "root"  -  file root
 "dir"   -  path without the filename
-"reldir"-  directory name of file relative to the current working directory
+"reldir"-  directory name of file relative to the glob provided
 "base"  -  file name and extension
 "ext"   -  just file extension
 "name"  -  just file name
