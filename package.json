@@ -28,8 +28,8 @@
     "compile": "coffee -o ./ -c src/foreach.coffee",
     "prependbin": "echo '#!/usr/bin/env node' | cat - foreach.js > tmp.js && mv tmp.js foreach.js",
     "makeexec": "chmod +x foreach.js && chmod +x src/foreach.coffee",
-    "badge": "coffee .config/badge-gen.coffee",
-    "istanbul": "istanbul cover --dir test/coverage/node node_modules/mocha/bin/_mocha -- $npm_package_mocha_opts",
+    "coverage": "istanbul cover --dir test/coverage/node node_modules/mocha/bin/_mocha -- $npm_package_mocha_opts && npm run coverage:badge",
+    "coverage:badge": "coffee .config/badge-gen.coffee",
     "test": "mocha $npm_package_mocha_opts"
   },
   "dependencies": {
