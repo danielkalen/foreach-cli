@@ -4,18 +4,15 @@ options =
 		alias: 'glob'
 		describe: 'Specify the glob '
 		type: 'string'
-		demand: false
 	'x': 
 		alias: 'execute'
 		describe: 'Command to execute upon file addition/change'
 		type: 'string'
-		demand: false
 	'c': 
 		alias: 'forceColor'
-		describe: 'Force color TTY output (pass --no-c) to disable'
+		describe: 'Force color TTY output (pass --no-c to disable)'
 		type: 'boolean'
 		default: true
-		demand: false
 
 
 fs = require('fs')
@@ -37,7 +34,7 @@ commandToExecute = args.x or args.execute or args._[1]
 forceColor = args.c or args.forceColor
 help = args.h or args.help
 regEx = placeholder: /(?:\#\{|\{\{)([^\/\}]+)(?:\}\}|\})/ig
-finalLogs = 'log':{}, 'warn':{}, 'error':{}
+finalLogs = 'log':{}, 'error':{}
 
 if help or not globToRun or not commandToExecute
 	process.stdout.write(yargs.help());
@@ -102,9 +99,12 @@ executeCommandFor = (filePath)-> new Promise (resolve)->
 	command = "FORCE_COLOR=true #{command}" if forceColor
 
 	exec command, (err, stdout, stderr)->
-		if err then finalLogs.warn[filePath] = err
 		if stdout then finalLogs.log[filePath] = stdout
-		if stderr then @errorCount.inc(); finalLogs.error[filePath] = stderr
+
+		if stderr and not err
+			finalLogs.log[filePath] = err
+		else if err
+			finalLogs.error[filePath] = stderr or err
 		resolve()
 
 
@@ -137,16 +137,12 @@ getDirName = (pathParams, filePath)->
 
 outputFinalLogs = ()->
 	for file,message of finalLogs.log
-		console.log chalk.bgWhite.black.bold.underline(file)
+		console.log chalk.bgWhite.black.bold("Output")+' '+chalk.dim(file)
 		console.log message
 	
-	for file,message of finalLogs.warn
-		console.log chalk.bgYellow.white.bold.underline(file)
-		console.warn message
-	
 	for file,message of finalLogs.error
-		console.log chalk.bgRed.white.bold.underline(file)
-		console.error message
+		console.log chalk.bgRed.white.bold("Error")+' '+chalk.dim(file)
+		console.log message
 
 
 
