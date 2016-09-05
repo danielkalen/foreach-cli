@@ -31,7 +31,7 @@ yargs = require('yargs')
 		.options(options)
 		.help('h')
 		.wrap(null)
-		.version()
+		.version(()-> require('./package.json').version)
 args = yargs.argv
 globToRun = args.g or args.glob or args._[0]
 commandToExecute = args.x or args.execute or args._[1]

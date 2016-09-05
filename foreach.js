@@ -40,7 +40,9 @@
 
   exec = require('child_process').exec;
 
-  yargs = require('yargs').usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>\nPlaceholders can be either noted with double curly braces {{name}} or hash+surrounding curly braces \#{name}").options(options).help('h').wrap(null).version();
+  yargs = require('yargs').usage("Usage: -g <glob> -x <command>  |or|  <glob> <command>\nPlaceholders can be either noted with double curly braces {{name}} or hash+surrounding curly braces \#{name}").options(options).help('h').wrap(null).version(function() {
+    return require('./package.json').version;
+  });
 
   args = yargs.argv;
 
