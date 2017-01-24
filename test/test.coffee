@@ -1,8 +1,10 @@
+PATH = require 'path'
+execa = require 'execa'
 fs = require 'fs-extra'
 chai = require 'chai'
 expect = chai.expect
 should = chai.should()
-execa = require 'execa'
+bin = PATH.resolve 'bin'
 
 
 suite "ForEach-cli", ()->
@@ -10,7 +12,7 @@ suite "ForEach-cli", ()->
 	suiteTeardown (done)-> fs.remove 'test/temp', done
 	
 	test "Will execute a given command on all matched files/dirs in a given glob when using explicit arguments", ()->
-		execa('src/foreach.coffee', ['-g', 'test/samples/sass/css/*', '-x', 'echo {{base}} >> test/temp/one']).then (err)->
+		execa(bin, ['-g', 'test/samples/sass/css/*', '-x', 'echo {{base}} >> test/temp/one']).then (err)->
 			result = fs.readFileSync 'test/temp/one', {encoding:'utf8'}
 			resultLines = result.split('\n').filter (validLine)-> validLine
 
@@ -21,7 +23,7 @@ suite "ForEach-cli", ()->
 
 	
 	test "Will execute a given command on all matched files/dirs in a given glob when using positional arguments", ()->
-		execa('src/foreach.coffee', ['test/samples/sass/css/*', 'echo {{base}} >> test/temp/two']).then (err)->
+		execa(bin, ['test/samples/sass/css/*', 'echo {{base}} >> test/temp/two']).then (err)->
 			result = fs.readFileSync 'test/temp/two', {encoding:'utf8'}
 			resultLines = result.split('\n').filter (validLine)-> validLine
 
@@ -32,7 +34,7 @@ suite "ForEach-cli", ()->
 
 
 	test "Placeholders can be used in the command which will be dynamically filled according to the subject path", ()->
-		execa('src/foreach.coffee', ['-g', 'test/samples/sass/css/*', '-x', 'echo "{{name}} {{ext}} {{base}} {{reldir}} {{path}} {{dir}}" >> test/temp/three']).then (err)->
+		execa(bin, ['-g', 'test/samples/sass/css/*', '-x', 'echo "{{name}} {{ext}} {{base}} {{reldir}} {{path}} {{dir}}" >> test/temp/three']).then (err)->
 			result = fs.readFileSync 'test/temp/three', {encoding:'utf8'}
 			resultLines = result.split('\n').filter (validLine)-> validLine
 
@@ -43,7 +45,7 @@ suite "ForEach-cli", ()->
 
 
 	test "Placeholders can be denoted either with dual curly braces or a hash + single curly brace wrap", ()->
-		execa('src/foreach.coffee', ['-g', 'test/samples/sass/css/*', '-x', 'echo "#{name} #{ext} #{base} #{reldir} #{path} #{dir}" >> test/temp/four']).then (err)->
+		execa(bin, ['-g', 'test/samples/sass/css/*', '-x', 'echo "#{name} #{ext} #{base} #{reldir} #{path} #{dir}" >> test/temp/four']).then (err)->
 			result = fs.readFileSync 'test/temp/four', {encoding:'utf8'}
 			resultLines = result.split('\n').filter (validLine)-> validLine
 
