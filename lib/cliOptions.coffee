@@ -12,6 +12,11 @@ module.exports =
 		describe: 'Force color TTY output (pass --no-c to disable)'
 		type: 'boolean'
 		default: true
+	't': 
+		alias: 'trim'
+		describe: 'Trims the output of the command executions to only show the first X characters of the output'
+		type: 'number'
+		default: undefined
 	'C': 
 		alias: 'concurrent'
 		describe: 'Execute commands concurrently (pass --no-C to disable)'

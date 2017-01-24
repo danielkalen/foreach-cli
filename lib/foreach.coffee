@@ -72,6 +72,12 @@ module.exports = (options)-> new Promise (finish)->
 			(typeof output is 'object')
 		)
 
+	formatOutputMessage = (message)->
+		if options.trim
+			message.slice(0, options.trim)
+		else
+			message
+
 
 
 
@@ -81,11 +87,11 @@ module.exports = (options)-> new Promise (finish)->
 		process.stdout.write '\n\n'
 		for file,message of finalLogs.log
 			console.log chalk.bgWhite.black.bold("Output")+' '+chalk.dim(file)
-			console.log message
+			console.log formatOutputMessage(message)
 		
 		for file,message of finalLogs.error
 			console.log chalk.bgRed.white.bold("Error")+' '+chalk.dim(file)
-			console.log message
+			console.log formatOutputMessage(message)
 
 		finish()
 
