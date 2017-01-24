@@ -5,6 +5,8 @@ chalk = require('chalk')
 Listr = require '@danielkalen/listr'
 exec = require('child_process').exec
 regEx = require './regex'
+
+
 module.exports = (options)-> new Promise (finish)->
 	finalLogs = 'log':{}, 'error':{}
 
@@ -30,14 +32,14 @@ module.exports = (options)-> new Promise (finish)->
 		command = "FORCE_COLOR=true #{command}" if options.forceColor
 
 		exec command, (err, stdout, stderr)->
-			if stdout then finalLogs.log[filePath] = stdout
+			if isValidOutput(stdout) then finalLogs.log[filePath] = stdout
 
-			if stderr and not err
-				finalLogs.log[filePath] = err
-			else if err
+			if isValidOutput(stderr) and not isValidOutput(err)
+				finalLogs.log[filePath] = stderr
+			else if isValidOutput(err)
 				finalLogs.error[filePath] = stderr or err
 
-			if err then reject() else resolve()
+			if isValidOutput(err) then reject() else resolve()
 
 
 
@@ -61,6 +63,14 @@ module.exports = (options)-> new Promise (finish)->
 			.replace pathParams.base, ''
 			.replace process.cwd()+"/#{dirInGlob}", ''
 			.slice(0, -1)
+
+	isValidOutput = (output)->
+		output and
+		output isnt 'null' and
+		(
+			(typeof output is 'string' and output.length >= 1) or
+			(typeof output is 'object')
+		)
 
 
 
