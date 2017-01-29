@@ -13,8 +13,7 @@
   ],
   "main": "index.js",
   "bin": {
-    "foreach": "bin",
-    "forEach": "bin"
+    "foreach": "bin"
   },
   "author": "danielkalen",
   "repository": {
