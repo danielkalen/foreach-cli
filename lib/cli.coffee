@@ -5,7 +5,7 @@ yargs
 	.epilogue(require('./cliUsage').epilogue)
 	.wrap(yargs.terminalWidth())
 	.help('h')
-	.version(()-> require('./package.json').version)
+	.version(()-> require('../package.json').version)
 args = yargs.argv
 requiresHelp = args.h or args.help
 suppliedOptions =
