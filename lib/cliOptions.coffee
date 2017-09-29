@@ -3,7 +3,11 @@ module.exports =
 		alias: 'glob'
 		describe: 'Specify the glob '
 		type: 'string'
-	'x': 
+	'i':
+		alias: 'ignore'
+		describe: 'Glob ignore'
+		type: 'string'
+	'x':
 		alias: 'execute'
 		describe: 'Command to execute upon file addition/change'
 		type: 'string'

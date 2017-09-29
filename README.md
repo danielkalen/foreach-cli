@@ -20,6 +20,7 @@ foreach -g <glob> -x <command to execute>
 
 ```bash
 -g, --glob        Specify the glob
+-i, --ignore      Glob ignore pattern(s)
 -x, --execute     Command to execute upon file addition/change
 -c, --forceColor  Force color TTY output (pass --no-c to disable)
 -t, --trim        Trims the output of the command executions to only show the first X characters of the output
