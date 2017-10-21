@@ -55,7 +55,13 @@ suite "ForEach-cli", ()->
 
 
 
+	test "Will execute a given command on all matched files/dirs in a given glob with ignore option", ()->
+		execa(bin, ['-g', 'test/samples/sass/css/*', '-i', '**/*copy*', '-x', 'echo {{base}} >> test/temp/five']).then (err)->
+			result = fs.readFileSync 'test/temp/five', {encoding:'utf8'}
+			resultLines = result.split('\n').filter (validLine)-> validLine
 
+			expect(resultLines.length).to.equal 1
+			expect(resultLines[0]).to.equal 'main.css'
 
 
 

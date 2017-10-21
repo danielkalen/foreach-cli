@@ -9,8 +9,10 @@ regEx = require './regex'
 
 module.exports = (options)-> new Promise (finish)->
 	finalLogs = 'log':{}, 'error':{}
+	globOptions = {}
+	if options.ignore then globOptions.ignore = options.ignore
 
-	glob options.glob, (err, files)-> if err then return console.error(err) else
+	glob options.glob, globOptions, (err, files)-> if err then return console.error(err) else
 		tasks = new Listr files.map((file)=>
 			title: "Executing command: #{chalk.dim(file)}"		
 			task: ()=> executeCommand(file)
