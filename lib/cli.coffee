@@ -12,6 +12,7 @@ suppliedOptions =
 	'glob': args.g or args.glob or args._[0]
 	'command': args.x or args.execute or args._[1]
 	'ignore': args.i or args.ignore
+	'nodir': args.nd or args.nodir
 	'trim': args.t or args.trim
 	'forceColor': args.c or args.forceColor
 	'concurrent': args.C or args.concurrent

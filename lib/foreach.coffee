@@ -11,6 +11,7 @@ module.exports = (options)-> new Promise (finish)->
 	finalLogs = 'log':{}, 'error':{}
 	globOptions = {}
 	if options.ignore then globOptions.ignore = options.ignore
+	if options.nodir then globOptions.nodir = options.nodir
 
 	glob options.glob, globOptions, (err, files)-> if err then return console.error(err) else
 		tasks = new Listr files.map((file)=>
