@@ -7,6 +7,10 @@ module.exports =
 		alias: 'ignore'
 		describe: 'Glob ignore'
 		type: 'string'
+	'nd':
+		alias: 'nodir'
+		describe: 'Ignore directories (folders)'
+		type: 'boolean'
 	'x':
 		alias: 'execute'
 		describe: 'Command to execute upon file addition/change'
