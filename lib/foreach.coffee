@@ -31,7 +31,8 @@ module.exports = (options)-> new Promise (finish)->
 			when pathParams[placeholder]? then pathParams[placeholder]
 			else entire
 		
-		command = "FORCE_COLOR=true #{command}" if options.forceColor
+		if options.forceColor and process.platform isnt 'win32'
+			command = "FORCE_COLOR=true #{command}"
 
 		exec command, (err, stdout, stderr)->
 			if isValidOutput(stdout) then finalLogs.log[filePath] = stdout
