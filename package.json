@@ -15,6 +15,9 @@
   "bin": {
     "foreach": "bin"
   },
+  "files": [
+    "lib"
+  ],
   "author": "danielkalen",
   "repository": {
     "type": "git",
