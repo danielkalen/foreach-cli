@@ -22,4 +22,7 @@ if requiresHelp or not suppliedOptions.glob or not suppliedOptions.command
 	process.exit(0)
 
 
-require('./foreach')(suppliedOptions)
+require('./foreach')(suppliedOptions).then (result) ->
+  process.exit(0)
+.catch () ->
+  process.exit(1)
