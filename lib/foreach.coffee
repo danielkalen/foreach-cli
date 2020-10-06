@@ -7,7 +7,7 @@ exec = require('child_process').exec
 regEx = require './regex'
 
 
-module.exports = (options)-> new Promise (finish)->
+module.exports = (options)-> new Promise (finish, fail)->
 	finalLogs = 'log':{}, 'error':{}
 	globOptions = {}
 	if options.ignore then globOptions.ignore = options.ignore
@@ -97,7 +97,10 @@ module.exports = (options)-> new Promise (finish)->
 			console.log chalk.bgRed.white.bold("Error")+' '+chalk.dim(file)
 			console.log formatOutputMessage(message)
 
-		finish()
+		if Object.keys(finalLogs.error).length
+			fail()
+		else
+			finish()
 
 
 
